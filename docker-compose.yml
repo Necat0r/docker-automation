@@ -1,0 +1,105 @@
+version: '3'
+services:
+  portainer:
+    image: portainer/portainer
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "portainer_data:/data"
+
+  nginx:
+    image: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+
+  samba:
+    image: dperson/samba
+    restart: unless-stopped
+    ports:
+      - "139:139"
+      - "445:445"
+      - "137:137/udp"
+      - "138:138/udp"
+    network_mode: "host"
+    volumes:
+      - "openhab-userdata:/share/openhab-userdata"
+      - "openhab-conf:/share/openhab-conf"
+      - "home-assistant:/share/home-assistant"
+    command: -n -u "${SAMBA_EDIT_USER};${SAMBA_EDIT_PASS}" -s "share;/share;yes;yes;yes;all;${SAMBA_EDIT_USER};${SAMBA_EDIT_USER}" -w WORKGROUP
+
+    env_file:
+      - .env
+
+  mosquitto:
+    image: eclipse-mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+     - "mosquitto-conf:/mosquitto/config"
+     - "mosquitto-data:/mosquitto/data"
+
+  deconz:
+    image: marthoc/deconz
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+    volumes:
+      - "deconz:/root/.local/share/dresden-elektronik/deCONZ"
+
+  openhab:
+    image: openhab/openhab:2.3.0-amd64-debian
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "openhab-userdata:/openhab/userdata"
+      - "openhab-conf:/openhab/conf"
+      - "openhab-addons:/openhab/addons"
+
+  hass:
+    image: homeassistant/home-assistant
+    restart: unless-stopped
+    ports:
+      - "8123:8123"
+    volumes:
+      - "home-assistant:/config"
+
+  samba-backup:
+    build: ../docker-samba-backup
+    image: docker-samba-backup
+    privileged: true
+
+    env_file:
+      - .env
+
+    volumes:
+      - test:/source/test:ro
+      - test2:/source/test2:ro
+
+      - portainer_data:/source/portainer_data:ro
+      - mosquitto-conf:/source/mosquitto-conf:ro
+      - mosquitto-data:/source/mosquitto-data:ro
+      - deconz:/source/deconz:ro
+      - openhab-addons:/source/openhab-addons:ro
+      - openhab-userdata:/source/openhab-userdata:ro
+      - openhab-conf:/source/openhab-conf:ro
+      - home-assistant:/source/home-assistant:ro
+
+volumes:
+  test:
+  test2:
+
+  portainer_data:
+  mosquitto-conf:
+  mosquitto-data:
+  deconz:
+  openhab-addons:
+  openhab-userdata:
+  openhab-conf:
+  home-assistant:
