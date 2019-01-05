@@ -59,6 +59,8 @@ services:
       - "8081:8080"
     devices:
       - "/dev/rfxtrx0:/dev/ttyUSB0"
+      - "/dev/epson0:/dev/ttyUSB1"
+      - "/dev/arduino0:/dev/ttyACM0"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
