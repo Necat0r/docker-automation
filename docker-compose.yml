@@ -53,7 +53,8 @@ services:
       - "deconz:/root/.local/share/dresden-elektronik/deCONZ"
 
   openhab:
-    image: openhab/openhab:2.3.0-amd64-debian
+    build: ../docker-openhab
+    image: docker-openhab
     restart: unless-stopped
     ports:
       - "8081:8080"
@@ -62,6 +63,7 @@ services:
       - "/dev/epson0:/dev/ttyUSB1"
       - "/dev/arduino0:/dev/ttyACM0"
       - "/dev/zstick0:/dev/ttyACM1"
+      - "/dev/snd:/dev/snd"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
