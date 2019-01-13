@@ -80,6 +80,7 @@ services:
   samba-backup:
     build: ../docker-samba-backup
     image: docker-samba-backup
+    restart: unless-stopped
     privileged: true
 
     env_file:
