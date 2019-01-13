@@ -61,6 +61,7 @@ services:
       - "/dev/rfxtrx0:/dev/ttyUSB0"
       - "/dev/epson0:/dev/ttyUSB1"
       - "/dev/arduino0:/dev/ttyACM0"
+      - "/dev/zstick0:/dev/ttyACM1"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
