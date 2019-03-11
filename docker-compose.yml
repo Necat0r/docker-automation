@@ -58,6 +58,7 @@ services:
     restart: unless-stopped
     ports:
       - "8081:8080"
+      - "8101:8101"
     devices:
       - "/dev/rfxtrx0:/dev/ttyUSB0"
       - "/dev/epson0:/dev/ttyUSB1"
