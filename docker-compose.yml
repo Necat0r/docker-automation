@@ -9,12 +9,6 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "portainer_data:/data"
 
-  nginx:
-    image: nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-
   samba:
     image: dperson/samba
     restart: unless-stopped
@@ -43,7 +37,8 @@ services:
      - "mosquitto-data:/mosquitto/data"
 
   deconz:
-    image: marthoc/deconz
+    # NOTE - 2.05.75 is incompatible with OpenHab 2.5.3 bindings
+    image: marthoc/deconz:amd64-2.05.74
     restart: unless-stopped
     ports:
       - "8082:80"
@@ -60,25 +55,19 @@ services:
       - "8081:8080"
       - "8101:8101"
     devices:
-      - "/dev/rfxtrx0:/dev/ttyUSB0"
-      - "/dev/epson0:/dev/ttyUSB1"
-      - "/dev/arduino0:/dev/ttyACM0"
-      - "/dev/zstick0:/dev/ttyACM1"
+      - "/dev/rfxtrx0:/dev/rfxtrx0"
+      - "/dev/epson0:/dev/epson0"
+      - "/dev/arduino0:/dev/arduino0"
+      - "/dev/zstick0:/dev/zstick0"
       - "/dev/snd:/dev/snd"
+    environment:
+      - "EXTRA_JAVA_OPTS=-Dgnu.io.rxtx.SerialPorts=/dev/rfxtrx0:/dev/epson0:/dev/arduino0:/dev/zstick0"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
       - "openhab-userdata:/openhab/userdata"
       - "openhab-conf:/openhab/conf"
       - "openhab-addons:/openhab/addons"
-
-  hass:
-    image: homeassistant/home-assistant
-    restart: unless-stopped
-    ports:
-      - "8123:8123"
-    volumes:
-      - "home-assistant:/config"
 
   samba-backup:
     build: ../docker-samba-backup
