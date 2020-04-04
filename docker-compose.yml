@@ -61,6 +61,7 @@ services:
       - "/dev/zstick0:/dev/zstick0"
       - "/dev/snd:/dev/snd"
     environment:
+      # See https://www.openhab.org/docs/administration/serial.html for more details
       - "EXTRA_JAVA_OPTS=-Dgnu.io.rxtx.SerialPorts=/dev/rfxtrx0:/dev/epson0:/dev/arduino0:/dev/zstick0"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
