@@ -22,6 +22,8 @@ services:
       - "openhab-userdata:/share/openhab-userdata"
       - "openhab-conf:/share/openhab-conf"
       - "home-assistant:/share/home-assistant"
+      - "mosquitto-conf:/share/mosquitto-conf"
+      - "deconz:/share/deconz:ro"
     command: -n -u "${SAMBA_EDIT_USER};${SAMBA_EDIT_PASS}" -s "share;/share;yes;yes;yes;all;${SAMBA_EDIT_USER};${SAMBA_EDIT_USER}" -w WORKGROUP
 
     env_file:
@@ -32,20 +34,26 @@ services:
     restart: unless-stopped
     ports:
       - "1883:1883"
+      - "8883:8080"
     volumes:
      - "mosquitto-conf:/mosquitto/config"
      - "mosquitto-data:/mosquitto/data"
 
   deconz:
     # NOTE - 2.05.75 is incompatible with OpenHab 2.5.3 bindings
-    image: marthoc/deconz:amd64-2.05.74
+    #image: marthoc/deconz:amd64-2.05.74
+    image: marthoc/deconz:amd64-2.05.79
     restart: unless-stopped
     ports:
       - "8082:80"
+      - "8182:443"
+      - "5901:5900"
     devices:
       - "/dev/conbee0:/dev/ttyUSB0"
     volumes:
       - "deconz:/root/.local/share/dresden-elektronik/deCONZ"
+    env_file:
+      - .env
 
   openhab:
     build: ../docker-openhab
