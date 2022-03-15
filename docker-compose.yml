@@ -42,9 +42,7 @@ services:
      - "mosquitto-data:/mosquitto/data"
 
   deconz:
-    # NOTE - 2.05.75 is incompatible with OpenHab 2.5.3 bindings
-    #image: marthoc/deconz:amd64-2.05.74
-    image: marthoc/deconz:amd64-2.05.79
+    image: deconzcommunity/deconz:stable
     restart: unless-stopped
     ports:
       - "8082:80"
@@ -53,7 +51,7 @@ services:
     devices:
       - "/dev/conbee0:/dev/ttyUSB0"
     volumes:
-      - "deconz:/root/.local/share/dresden-elektronik/deCONZ"
+      - "deconz:/opt/deCONZ"
     env_file:
       - .env
 
